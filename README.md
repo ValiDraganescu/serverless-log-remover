@@ -36,4 +36,5 @@ custom:
 ```
 
 ##Copyright
+[eupl]: eupl.jpg "EUPL logo"
 Distributed under [European Union Public License, version 1.2 (EUPL-1.2)](https://opensource.org/licenses/EUPL-1.1)

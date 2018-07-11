@@ -1,7 +1,7 @@
-# Serverless log remover
+# Serverless cleanup
 A plugin for the [Serverless Framework](https://serverless.com/).
 
-It does what the name says (and more): removes logs from your JS code when you deploy your services.
+It does what the name says (and more): cleans up logs from your JS code when you deploy your services.
 
 I created it to remove logs after the compile step of the [serverless-plugin-typescript](https://github.com/prismagraphql/serverless-plugin-typescript)
 It also works nice with the [serverless-offline](https://github.com/dherault/serverless-offline) plugin.
@@ -20,7 +20,7 @@ Now each time you run `sls deploy --stage prod` or `sls deploy --stage staging`,
 
 #### Install
 
-`npm i serverless-log-remover`
+`npm i serverless-cleanup`
 
 ### Version 0.2.0
 Added the concept of jobs, now you can define many different jobs to work on different folders, see example.
@@ -30,12 +30,12 @@ Added the concept of jobs, now you can define many different jobs to work on dif
   plugins:
     - serverless-plugin-typescript
     - serverless-offline
-    - serverless-log-remover
+    - serverless-cleanup
 ```
 #### Example:
 ```yml
 custom:
-  logRemover:
+  cleanup:
     currentStage: ${opt:stage, 'dev'}
     jobs:
       - dir: ./.build

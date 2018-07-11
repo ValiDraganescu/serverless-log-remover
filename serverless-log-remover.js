@@ -29,6 +29,9 @@ class LogRemover {
             "before:offline:start:init": async () => {
                 await this.remove();
             },
+            "before:package": async () => {
+                await this.remove();
+            },
             "removeCode:remove": this.remove.bind(this),
         };
     }
@@ -68,12 +71,12 @@ class LogRemover {
                 if (file.length > 0) {
                     let code = String(fs.readFileSync(file));
                     for (let pattern of job.patterns) {
-                        const regex = new RegExp(pattern,"gmi");
+                        const regex = new RegExp(pattern, "gmi");
                         // this._serverless.cli.log(`Replace regex:: ${regex}`);
                         code = code.replace(regex, "");
                     }
                     for (let log of job.logs) {
-                        const regex = new RegExp(`console.${log}\(.*\);?`,"gmi");
+                        const regex = new RegExp(`console.${log}\(.*\);?`, "gmi");
                         // this._serverless.cli.log(`Replace regex:: ${regex}`);
                         code = code.replace(regex, "");
                     }

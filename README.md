@@ -13,6 +13,11 @@ Than you need to define on what stages to remove the logs (probably you need you
 
 Now each time you run `sls deploy --stage prod` or `sls deploy --stage staging`, the debug logs will be removed and the rest of the logs (like log and info) will be kept.
 
+### Features
+1. remove logs like "debug", "log", "error"
+2. remove comments: single line and multi line
+3. remove any result of the given regex pattern
+
 #### Install
 
 `npm i serverless-log-remover`
@@ -31,8 +36,12 @@ custom:
     dir: ./.build
     logs:
       - debug
+    comments:
+      - single-line
+      - multi-line
     patterns:
       - console.error\(.*\);?
+    
     stages:
       - prod
       - staging

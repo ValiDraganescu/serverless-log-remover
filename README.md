@@ -33,18 +33,31 @@ Now each time you run `sls deploy --stage prod` or `sls deploy --stage staging`,
 ```yml
 custom:
   logRemover:
-    dir: ./.build
-    logs:
-      - debug
-    comments:
-      - single-line
-      - multi-line
-    patterns:
-      - console.error\(.*\);?
-    
-    stages:
-      - prod
-      - staging
+    jobs:
+      - dir: ./.build
+        logs:
+          - debug
+        comments:
+          - single-line
+          - multi-line
+        patterns:
+          - console.error\(.*\);? 
+        stages:
+          - prod
+          - staging
+      - dir: ./node_modules
+        logs:
+          - debug
+          - log
+          - info
+        comments:
+          - single-line
+          - multi-line
+        stages:
+          - dev
+          - qa
+          - staging
+          - prod
     currentStage: ${opt:stage, 'dev'}
 ```
 

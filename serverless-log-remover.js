@@ -50,22 +50,16 @@ class LogRemover {
         return fileList;
     }
 
-    isRemoveStage() {
-        return this._serverless.service.custom.logRemover.stages.indexOf(this._serverless.service.custom.logRemover.currentStage) > -1;
+    isRemoveStage(job) {
+        return job.stages.indexOf(this._serverless.service.custom.logRemover.currentStage) > -1;
     }
 
-    remove() {
-        this._serverless.cli.log("Removing code");
-        if (!this._serverless.service.custom.logRemover
-            || !this._serverless.service.custom.logRemover.dir
-            || !this._serverless.service.custom.logRemover.patterns) {
-            return;
-        }
-        const comments = this._serverless.service.custom.logRemover.comments;
+    execute(job) {
+        const comments = job.comments;
         const removeSingleLine = comments && comments.includes("single-line");
         const removeMultiLine = comments && comments.includes("multi-line");
         if (this.isRemoveStage()) {
-            const files = this.walkSync(this._serverless.service.custom.logRemover.dir, []);
+            const files = this.walkSync(job.dir, []);
             if (!files || files.length === 0) {
                 return
             }
@@ -73,12 +67,12 @@ class LogRemover {
             for (let file of files) {
                 if (file.length > 0) {
                     let code = String(fs.readFileSync(file));
-                    for (let pattern of this._serverless.service.custom.logRemover.patterns) {
+                    for (let pattern of job.patterns) {
                         const regex = new RegExp(pattern,"gmi");
                         // this._serverless.cli.log(`Replace regex:: ${regex}`);
                         code = code.replace(regex, "");
                     }
-                    for (let log of this._serverless.service.custom.logRemover.logs) {
+                    for (let log of job.logs) {
                         const regex = new RegExp(`console.${log}\(.*\);?`,"gmi");
                         // this._serverless.cli.log(`Replace regex:: ${regex}`);
                         code = code.replace(regex, "");
@@ -97,6 +91,20 @@ class LogRemover {
                 }
             }
         }
+    }
+
+    remove() {
+        this._serverless.cli.log("Executing log remover jobs");
+        if (!this._serverless.service.custom.logRemover
+            || !this._serverless.service.custom.logRemover.jobs) {
+            return;
+        }
+        const jobs = this._serverless.service.custom.logRemover.jobs;
+
+        for (let job of jobs) {
+            this.execute(job);
+        }
+
     }
 }
 

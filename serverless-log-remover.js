@@ -61,6 +61,7 @@ class LogRemover {
             || !this._serverless.service.custom.logRemover.patterns) {
             return;
         }
+        const removeComments = !this._serverless.service.custom.logRemover.removeComments;
         if (this.isRemoveStage()) {
             const files = this.walkSync(this._serverless.service.custom.logRemover.dir, []);
             if (!files || files.length === 0) {
@@ -80,12 +81,19 @@ class LogRemover {
                         // this._serverless.cli.log(`Replace regex:: ${regex}`);
                         code = code.replace(regex, "");
                     }
+                    if (removeComments) {
+                        // remove single line comments
+                        const regex = new RegExp("\\/\\/.+", "gmi");
+                        code = code.replace(regex, "");
+                        // remove multi line comments
+                        const multiLineRegex = new RegExp("\\/\\*[\\s\\S]*?\\*\\/|([^\\\\:]|^)\\/\\/.*$", "gmi");
+                        code = code.replace(regex, "");
+                    }
                     fs.writeFileSync(file, code);
                 }
             }
         }
     }
-
 }
 
 module.exports = LogRemover;

@@ -1,6 +1,6 @@
 {
   "name": "serverless-log-remover",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A plugin that removes logs (or removes any other code based on regex) from built code for the [Serverless Framework](https://serverless.com/).",
   "main": "serverless-log-remover.js",
   "scripts": {

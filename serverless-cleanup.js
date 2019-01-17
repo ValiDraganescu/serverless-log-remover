@@ -6,12 +6,13 @@ class ServerlessCleanup {
 
     constructor(serverless, options) {
         this._serverless = serverless;
+        this._serverless.cli.log(`Executing cleanup`);
         this._options = options;
         this.commands = {
-            removeCode: {
-                usage: "Removes the code that has been defined as a pattern in the custom section of your serverless.yml file",
+            cleanup: {
+                usage: "Cleans up the code that has been defined as a pattern in the custom section of your serverless.yml file",
                 lifecycleEvents: [
-                    "remove"
+                    "cleanup"
                 ],
                 options: {
                     message: {}
@@ -21,18 +22,18 @@ class ServerlessCleanup {
         };
         this.hooks = {
             "before:run:run": async () => {
-                await this.remove();
+                await this.cleanup();
             },
             "before:offline:start": async () => {
-                await this.remove();
+                await this.cleanup();
             },
             "before:offline:start:init": async () => {
-                await this.remove();
+                await this.cleanup();
             },
             "before:package:cleanup": async () => {
-                await this.remove();
+                await this.cleanup();
             },
-            "removeCode:remove": this.remove.bind(this),
+            "cleanup:cleanup": this.cleanup.bind(this),
         };
     }
 
@@ -56,9 +57,6 @@ class ServerlessCleanup {
     }
 
     execute(job) {
-        const comments = job.comments;
-        const removeSingleLine = comments && comments.includes("single-line");
-        const removeMultiLine = comments && comments.includes("multi-line");
         const isRemovableStage = this.isRemoveStage(job);
         if (!isRemovableStage) {
             this._serverless.cli.log(`Not a cleanup stage, skip`);
@@ -71,6 +69,7 @@ class ServerlessCleanup {
         }
         this._serverless.cli.log(`Need to update ${files.length} files`);
         for (let file of files) {
+            this._serverless.cli.log(`Working on file: ${file}`);
             if (file.length > 0) {
                 let code = String(fs.readFileSync(file));
                 if (job.patterns) {
@@ -84,7 +83,7 @@ class ServerlessCleanup {
                 if (job.logs) {
                     for (let log of job.logs) {
                         // this._serverless.cli.log("Removing logs");
-                        const regex = new RegExp(`console.${log}\(.*\);?`, "gmi");
+                        const regex = new RegExp(`this._serverless.cli.${log}\(.*\);?`, "gmi");
                         // this._serverless.cli.log(`Replace regex:: ${regex}`);
                         code = code.replace(regex, "");
                     }
@@ -106,7 +105,7 @@ class ServerlessCleanup {
 
     }
 
-    remove() {
+    cleanup() {
         if (!this._serverless.service.custom.cleanup
             || !this._serverless.service.custom.cleanup.jobs) {
             this._serverless.cli.log("No jobs, defined, skipping");

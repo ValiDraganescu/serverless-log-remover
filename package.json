@@ -1,8 +1,9 @@
 {
   "name": "serverless-cleanup",
-  "version": "0.3.0",
+  "version": "0.3.1",
+  "_location": "/serverless-cleanup",
   "description": "A plugin that removes logs (or removes any other code based on regex) from built code for the [Serverless Framework](https://serverless.com/).",
-  "main": "serverless-log-remover.js",
+  "main": "serverless-cleanup.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

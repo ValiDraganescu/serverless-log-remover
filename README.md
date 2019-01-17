@@ -41,9 +41,8 @@ custom:
       - dir: ./.build
         logs:
           - debug
-        comments:
-          - single-line
-          - multi-line
+        comments: true
+        tidyup: true
         patterns:
           - console.error\(.*\);? 
         stages:
@@ -54,9 +53,6 @@ custom:
           - debug
           - log
           - info
-        comments:
-          - single-line
-          - multi-line
         stages:
           - dev
           - qa
